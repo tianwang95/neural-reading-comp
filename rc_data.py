@@ -7,10 +7,10 @@ import itertools as it
 import time
 
 def glove2dict(src_filename):
-    reader = csv.reader(open(src_filename), 
+    reader = csv.reader(open(src_filename),
              delimiter=' ', quoting=csv.QUOTE_NONE)
-    return {line[0]: np.array(list(map(float, line[1: ])), 
-            dtype='float32') for line in reader}    
+    return {line[0]: np.array(list(map(float, line[1: ])),
+            dtype='float32') for line in reader}
 
 class DataProcessor:
 
@@ -195,14 +195,15 @@ class DataProcessor:
 
             if counter % batch_size != 0:
                 self.save_batch(batch_X, batch_Xq, batch_y, target, counter)
-            
+
     def save_batch(self, batch_X, batch_Xq, batch_y, target, num):
-        new = np.array([np.array(batch_X),
-            np.array(batch_Xq),
-            np.array(batch_y)])
+        x_arr = np.array(batch_X)
+        xq_arr = np.array(batch_Xq)
+        y_arr = np.array(batch_y)
+        new = [x_arr, xq_arr, y_arr]
 
         np.save(os.path.join(target, "batch{}".format(num)), new)
-    
+
     def do_all(self, sources, targets, metadata_directory, batch_size):
         """
         sources[0] must be training!

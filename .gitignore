@@ -1,7 +1,9 @@
-<<<<<<< HEAD
+#Ignore AWS security key
+*.pem
+
 *.pyc
 /glove.6B/*
-=======
+#
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -64,4 +66,3 @@ target/
 
 #Ipython Notebook
 .ipynb_checkpoints
->>>>>>> 381311043753a9110796ceebd1f0edbe61979071
