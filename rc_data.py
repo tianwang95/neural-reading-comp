@@ -3,6 +3,7 @@ import numpy as np
 import csv
 from collections import Counter
 import itertools as it
+from threading import Thread 
 
 import time
 
@@ -21,6 +22,7 @@ class DataProcessor:
         self.query_length = None
         self.weights = None
         self.vocab_size = vocab_size
+        self.threads= []
 
         self.word_to_idx = {}
         self.add_word('<UNK>') #add unknown word
@@ -167,6 +169,17 @@ class DataProcessor:
     def get_weights(self):
         return self.weights
 
+    def make_batch(self, filenames, source, target, batch_idx):
+        batch_X, batch_Xq, batch_y = [], [], []
+        for fn in filenames:
+            if fn.endswith('.question'):
+                X, Xq, y = self.to_idx_doc_question(os.path.join(source, fn))
+                batch_X.append(X)
+                batch_Xq.append(Xq)
+                batch_y.append(y)
+        self.save_batch(batch_X, batch_Xq, batch_y, target, batch_idx)
+
+
     def generate_batch_files(self, sources, targets, batch_size):
         """
         save np arrays of with batch_size samples into a file for
@@ -180,6 +193,13 @@ class DataProcessor:
         assert(len(sources) == len(targets))
 
         for source, target in it.izip(sources, targets):
+            all_files = os.listdir(source)
+            batch_file_lists = [all_files[x:x+batch_size] for x in xrange(0, len(all_files), batch_size)]
+            for i, batch_file_list in enumerate(batch_file_lists):
+                t = Thread(target=self.make_batch, args=(batch_file_list, source, target, i)) 
+                t.start()
+                self.threads.append(t)
+            '''
             counter = 0
             batch_X, batch_Xq, batch_y = [], [], []
             for fn in os.listdir(source):
@@ -195,6 +215,7 @@ class DataProcessor:
 
             if counter % batch_size != 0:
                 self.save_batch(batch_X, batch_Xq, batch_y, target, counter)
+            '''
 
     def save_batch(self, batch_X, batch_Xq, batch_y, target, num):
         X = np.array(batch_X)
@@ -220,10 +241,8 @@ class DataProcessor:
 
         a = time.time()
         self.generate_batch_files(sources, targets, batch_size)
-        b = time.time()
-        print "batches done! - {}s".format(b-a)
 
-        f = open(os.path.join(metadata_directory, 'metadata.txt'), 'w')
+        f = open(os.path.join(metadata_directory, 'metadata.txt'), 'w+')
         f.write("input_length:{}\n".format(self.input_length))
         f.write("query_length:{}\n".format(self.query_length))
         f.write("vocab_size:{}\n".format(len(self.word_to_idx)))
@@ -231,6 +250,10 @@ class DataProcessor:
 
         if self.word_vector:
             np.save(os.path.join(metadata_directory, 'weights'), self.weights)
+        for t in self.threads:
+            t.join()
+        b = time.time()
+        print "batches done! - {}s".format(b-a)
 
     def get_idx_to_word(self):
         return {v: k for k, v in self.word_to_idx.iteritems()}
