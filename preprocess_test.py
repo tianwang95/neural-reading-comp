@@ -1,4 +1,4 @@
-import rc_test
+import rc_data
 import os
 import numpy as np
 
