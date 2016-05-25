@@ -197,7 +197,6 @@ class DataProcessor:
                 self.save_batch(batch_X, batch_Xq, batch_y, target, counter)
             
     def save_batch(self, batch_X, batch_Xq, batch_y, target, num):
-        print "batch created!"
         new = np.array([np.array(batch_X),
             np.array(batch_Xq),
             np.array(batch_y)])
