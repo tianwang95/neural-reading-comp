@@ -197,11 +197,11 @@ class DataProcessor:
                 self.save_batch(batch_X, batch_Xq, batch_y, target, counter)
             
     def save_batch(self, batch_X, batch_Xq, batch_y, target, num):
-        new = np.array([np.array(batch_X),
-            np.array(batch_Xq),
-            np.array(batch_y)])
-
-        np.save(os.path.join(target, "batch{}".format(num)), new)
+        X = np.array(batch_X)
+        Xq = np.array(batch_Xq)
+        y = np.array(batch_y)
+        np.savez(os.path.join(target, "batch{}".format(num)),
+                X=X, Xq=Xq, y=y)
     
     def do_all(self, sources, targets, metadata_directory, batch_size):
         """

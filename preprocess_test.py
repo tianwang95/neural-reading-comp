@@ -19,12 +19,12 @@ vocab_size = int(f.readline().split(':')[1])
 f.close()
 
 for i, fn in enumerate(os.listdir(directory)):
-    array = np.load(os.path.join(directory, fn))
-    for sample in array[0]:
+    arrays = np.load(os.path.join(directory, fn))
+    for sample in arrays['X']:
         assert(len(sample) == input_length)
-    for sample in array[1]:
+    for sample in arrays['Xq']:
         assert(len(sample) == query_length)
-    for sample in array[2]:
+    for sample in arrays['y']:
         print sample
 
 array = np.load(os.path.join(metadata_directory, "weights.npy"))
