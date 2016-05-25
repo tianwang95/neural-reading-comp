@@ -234,3 +234,13 @@ class DataProcessor:
 
     def get_idx_to_word(self):
         return {v: k for k, v in self.word_to_idx.iteritems()}
+
+
+def rc_data_generator(directory):
+    """
+    return ([X, Xq], y)
+    """
+    filelist = os.listdir(directory)
+    for fn in filelist:
+        array = np.load(os.path.join(directory, fn))
+        yield [array[0], array[1]], array[2]
