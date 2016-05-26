@@ -2,7 +2,11 @@
 *.pem
 
 *.pyc
+*.npz
+*.npy
+metadata.txt
 *glove.6B*
+.DS_Store
 #
 # Byte-compiled / optimized / DLL files
 __pycache__/
