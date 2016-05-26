@@ -1,0 +1,15 @@
+./preprocess_med.py: 1: ./preprocess_med.py: import: not found
+./preprocess_med.py: 2: ./preprocess_med.py: import: not found
+./preprocess_med.py: 3: ./preprocess_med.py: import: not found
+./preprocess_med.py: 5: ./preprocess_med.py: Syntax error: "(" unexpected
+lengths done! - 55.3639190197s
+Traceback (most recent call last):
+  File "./preprocess_med.py", line 18, in <module>
+    data_processor.do_all(sources, targets, metadata_directory, 10000)
+  File "/home/ubuntu/neural-reading-comp/preprocessing/rc_data.py", line 268, in do_all
+    self.set_vocab(sources[0])
+  File "/home/ubuntu/neural-reading-comp/preprocessing/rc_data.py", line 170, in set_vocab
+    t.start()
+  File "/usr/lib/python2.7/threading.py", line 745, in start
+    _start_new_thread(self.__bootstrap, ())
+thread.error: can't start new thread

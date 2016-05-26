@@ -24,8 +24,10 @@ class DataGenerator(object):
         f.close()
         self.nb_samples_epoch = metadata_dict[data_type] 
 
+
     def get_nb_samples_epoch(self):
         return self.nb_samples_epoch
+
 
     def __iter__(self):
         return self

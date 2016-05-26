@@ -138,5 +138,4 @@ def get_model(
     model.compile(optimizer=optimizer,
                   loss=loss,
                   metrics=['accuracy'])
-    print model.summary()
     return model

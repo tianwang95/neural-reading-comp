@@ -7,6 +7,8 @@
 metadata.txt
 *glove.6B*
 .DS_Store
+full_dataset/
+med_dataset/
 #
 # Byte-compiled / optimized / DLL files
 __pycache__/
