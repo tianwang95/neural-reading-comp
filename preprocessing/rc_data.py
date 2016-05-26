@@ -1,10 +1,11 @@
 import os
+import sys
 import numpy as np
 import csv
 from collections import Counter
 import itertools as it
-from threading import Thread, Lock
-
+from threading import Lock
+from concurrent.futures import *
 import time
 
 def glove2dict(src_filename):
@@ -22,13 +23,12 @@ class DataProcessor:
         self.query_length = None
         self.weights = None
         self.vocab_size = vocab_size
-        self.threads = []
-        self.lock = Lock()
         self.max_entity_id = 0
         self.entity_set = set()
         self.nb_samples_list = []
         self.word_to_idx = {}
         self.add_word('<UNK>') #add unknown word
+        self.lock = Lock()
 
     def add_word(self, word):
         self.word_to_idx[word] = len(self.word_to_idx) + 1
@@ -102,21 +102,19 @@ class DataProcessor:
 
         for entity in entities:
             entity_str = entity.split(':')[0]
-            self.lock.acquire()
-            self.entity_set.add(entity_str)
-            entity_id = int(entity_str[len('@entity'):])
-            if entity_id > self.max_entity_id:
-                self.max_entity_id = entity_id
-            self.lock.release()
+            with self.lock:
+                self.entity_set.add(entity_str)
+                entity_id = int(entity_str[len('@entity'):])
+                if entity_id > self.max_entity_id:
+                    self.max_entity_id = entity_id
 
         curr_context_length = context.count(' ') + 1
         curr_query_length = query.count(' ') + 1
-        self.lock.acquire()
-        if curr_context_length > self.input_length:
-            self.input_length = curr_context_length
-        if curr_query_length > self.query_length:
-            self.query_length = curr_query_length
-        self.lock.release()
+        with self.lock:
+            if curr_context_length > self.input_length:
+                self.input_length = curr_context_length
+            if curr_query_length > self.query_length:
+                self.query_length = curr_query_length
 
     def get_lengths(self, directories):
         """
@@ -124,16 +122,13 @@ class DataProcessor:
 
         returns input_length, query_length
         """
-        for d_idx, directory in enumerate(directories):
-            for i in os.listdir(directory):
-                if i.endswith('.question'):
-                    self.nb_samples_list[d_idx] += 1
-                    t = Thread(target=self.get_file_lengths, args=(directory, i))
-                    t.start()
-                    self.threads.append(t)
+        with ThreadPoolExecutor(max_workers=20) as executor:
+            for d_idx, directory in enumerate(directories):
+                for i in os.listdir(directory):
+                    if i.endswith('.question'):
+                        self.nb_samples_list[d_idx] += 1
+                        executor.submit(self.get_file_lengths, directory, i)
 
-        for t in self.threads:
-            t.join()
 
     def get_file_vocab(self, train_directory, fn, c):
         f = open(os.path.join(train_directory, fn), 'r')
@@ -148,14 +143,12 @@ class DataProcessor:
 
         for word in context.split():
             if word[0] != '@':
-                self.lock.acquire()
-                c[word] += 1
-                self.lock.release()
+                with self.lock:
+                    c[word] += 1
         for word in query:
             if word[0] != '@':
-                self.lock.acquire()
-                c[word] += 1
-                self.lock.release()
+                with self.lock:
+                    c[word] += 1
 
     def set_vocab(self, train_directory):
         """
@@ -164,14 +157,11 @@ class DataProcessor:
         """
         c = Counter()
 
-        for i in os.listdir(train_directory):
-            if i.endswith('.question'):
-                t = Thread(target=self.get_file_vocab, args=(train_directory, i, c))
-                t.start()
-                self.threads.append(t)
-
-        for t in self.threads:
-            t.join()
+        with ThreadPoolExecutor(max_workers=20) as executor:
+            for i in os.listdir(train_directory):
+                if i.endswith('.question'):
+                    executor.submit(self.get_file_vocab, train_directory, i, c)
+            executor.shutdown()
 
         # compute final vocab list
         for word in self.entity_set:
@@ -224,10 +214,9 @@ class DataProcessor:
         for source, target in it.izip(sources, targets):
             all_files = os.listdir(source)
             batch_file_lists = [all_files[x:x+batch_size] for x in xrange(0, len(all_files), batch_size)]
-            for i, batch_file_list in enumerate(batch_file_lists):
-                t = Thread(target=self.make_batch, args=(batch_file_list, source, target, i)) 
-                t.start()
-                self.threads.append(t)
+            with ThreadPoolExecutor(max_workers=20) as executor:
+                for i, batch_file_list in enumerate(batch_file_lists):
+                    executor.submit(self.make_batch, batch_file_list, source, target, i)
             '''
             counter = 0
             batch_X, batch_Xq, batch_y = [], [], []
@@ -271,6 +260,8 @@ class DataProcessor:
 
         a = time.time()
         self.generate_batch_files(sources, targets, batch_size)
+        b = time.time()
+        print "batches done! - {}s".format(b-a)
 
         f = open(os.path.join(metadata_directory, 'metadata.txt'), 'w+')
         f.write("input_length:{}\n".format(self.input_length))
@@ -283,10 +274,7 @@ class DataProcessor:
 
         if self.word_vector:
             np.save(os.path.join(metadata_directory, 'weights'), self.weights)
-        for t in self.threads:
-            t.join()
-        b = time.time()
-        print "batches done! - {}s".format(b-a)
+
 
     def get_idx_to_word(self):
         return {v: k for k, v in self.word_to_idx.iteritems()}
