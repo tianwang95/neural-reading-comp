@@ -3,7 +3,7 @@ import numpy as np
 import csv
 from collections import Counter
 import itertools as it
-from threading import Thread 
+from threading import Thread, Lock
 
 import time
 
@@ -22,7 +22,10 @@ class DataProcessor:
         self.query_length = None
         self.weights = None
         self.vocab_size = vocab_size
-        self.threads= []
+        self.threads = []
+        self.lock = Lock()
+        self.max_entity_id = 0
+        self.entity_set = set()
 
         self.word_to_idx = {}
         self.add_word('<UNK>') #add unknown word
@@ -84,6 +87,35 @@ class DataProcessor:
 
         return X, Xq, y
 
+    def get_file_lengths(self, directory, fn):
+        f = open(os.path.join(directory, fn), 'r')
+        lines = []
+        for line in f:
+            lines.append(line.strip())
+        f.close()
+
+        context = lines[2]
+        query = lines[4]
+        entities = lines[8:]
+
+        for entity in entities:
+            entity_str = entity.split(':')[0]
+            self.lock.acquire()
+            self.entity_set.add(entity_str)
+            entity_id = int(entity_str[len('@entity'):])
+            if entity_id > self.max_entity_id:
+                self.max_entity_id = entity_id
+            self.lock.release()
+
+        curr_context_length = context.count(' ') + 1
+        curr_query_length = query.count(' ') + 1
+        self.lock.acquire()
+        if curr_context_length > self.input_length:
+            self.input_length = curr_context_length
+        if curr_query_length > self.query_length:
+            self.query_length = curr_query_length
+        self.lock.release()
+
     def get_lengths(self, directories):
         """
         directories: list of paths to directories with questions
@@ -93,23 +125,34 @@ class DataProcessor:
         for directory in directories:
             for i in os.listdir(directory):
                 if i.endswith('.question'):
-                    f = open(os.path.join(directory, i), 'r')
-                    lines = []
-                    for _ in xrange(5):
-                        lines.append(f.readline().strip())
-                    f.close()
+                    t = Thread(target=self.get_file_lengths, args=(directory, i))
+                    t.start()
+                    self.threads.append(t)
 
-                    context = lines[2]
-                    query = lines[4]
+        for t in self.threads:
+            t.join()
 
-                    curr_context_length = context.count(' ') + 1
-                    curr_query_length = query.count(' ') + 1
-                    if curr_context_length > self.input_length:
-                        self.input_length = curr_context_length
-                    if curr_query_length > self.query_length:
-                        self.query_length = curr_query_length
+    def get_file_vocab(self, train_directory, fn, c):
+        f = open(os.path.join(train_directory, fn), 'r')
+        lines = []
+        for _ in xrange(7):
+            lines.append(f.readline().strip())
+        f.close()
 
-        return self.input_length, self.query_length
+        context = lines[2]
+        query = lines[4]
+        answer = lines[6]
+
+        for word in context.split():
+            if word[0] != '@':
+                self.lock.acquire()
+                c[word] += 1
+                self.lock.release()
+        for word in query:
+            if word[0] != '@':
+                self.lock.acquire()
+                c[word] += 1
+                self.lock.release()
 
     def set_vocab(self, train_directory):
         """
@@ -117,35 +160,18 @@ class DataProcessor:
         vocab_size = number of unique words including <UNK>
         """
         c = Counter()
-        entity_set = set()
 
         for i in os.listdir(train_directory):
             if i.endswith('.question'):
-                f = open(os.path.join(train_directory, i), 'r')
-                lines = []
-                for _ in xrange(7):
-                    lines.append(f.readline().strip())
-                f.close()
+                t = Thread(target=self.get_file_vocab, args=(train_directory, i, c))
+                t.start()
+                self.threads.append(t)
 
-                context = lines[2]
-                query = lines[4]
-                answer = lines[6]
-
-                for word in context.split():
-                    if word[0] == '@':
-                        entity_set.add(word)
-                    else:
-                        c[word] += 1
-                for word in query:
-                    if word[0] == '@':
-                        entity_set.add(word)
-                    else:
-                        c[word] += 1
-                if answer[0] == '@':
-                    entity_set.add(answer)
+        for t in self.threads:
+            t.join()
 
         # compute final vocab list
-        for word in entity_set:
+        for word in self.entity_set:
             self.add_word(word)
         num_to_add = self.vocab_size - len(self.word_to_idx)
 
@@ -246,6 +272,7 @@ class DataProcessor:
         f.write("input_length:{}\n".format(self.input_length))
         f.write("query_length:{}\n".format(self.query_length))
         f.write("vocab_size:{}\n".format(len(self.word_to_idx)))
+        f.write("entity_dim:{}\n".format(self.max_entity_id + 1))
         f.close()
 
         if self.word_vector:
