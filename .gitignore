@@ -2,7 +2,7 @@
 *.pem
 
 *.pyc
-/glove.6B/*
+*glove.6B*
 #
 # Byte-compiled / optimized / DLL files
 __pycache__/

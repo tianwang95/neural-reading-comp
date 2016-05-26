@@ -2,13 +2,13 @@ import rc_data
 import os
 import numpy as np
 
-sources = ["toy_dataset/cnn/questions/training",
-           "toy_dataset/cnn/questions/test",
-           "toy_dataset/cnn/questions/validation"]
-targets = ["toy_dataset/cnn_processed/questions/training",
-           "toy_dataset/cnn_processed/questions/test",
-           "toy_dataset/cnn_processed/questions/validation"]
-metadata_directory = "toy_dataset/cnn_processed/metadata"
+sources = ["datasets/toy_dataset/cnn/questions/training",
+           "datasets/toy_dataset/cnn/questions/test",
+           "datasets/toy_dataset/cnn/questions/validation"]
+targets = ["datasets/toy_dataset/cnn_processed/questions/training",
+           "datasets/toy_dataset/cnn_processed/questions/test",
+           "datasets/toy_dataset/cnn_processed/questions/validation"]
+metadata_directory = "datasets/toy_dataset/cnn_processed/metadata"
 
 directory = targets[0]
 
