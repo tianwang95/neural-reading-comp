@@ -55,7 +55,7 @@ def get_model(
                         consume_less='gpu',
                         go_backwards=True)(x)
 
-    yd = merge([story_lstm_f, story_lstm_b], mode='concat')
+    yd = merge([story_lstm_f, story_lstm_b], mode='concat', concat_axis=2)
 
     query_input = Input(shape=(query_maxlen,), dtype='int32', name='QueryInput')
 
