@@ -54,7 +54,7 @@ class DataGenerator(object):
         Xq = self.cur_file_content['Xq'][indices]
         y = self.cur_file_content['y'][indices]
         self.cur_file_sample_index += nb_samples
-        return X, X, y
+        return X, Xq, y
 
 
     def next(self):

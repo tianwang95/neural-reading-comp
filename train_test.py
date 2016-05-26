@@ -4,7 +4,7 @@ from models.data_generator import DataGenerator
 import theano
 
 theano.config.optimizer = 'None'
-theano.config.exception_verbosiry = 'high'
+theano.config.exception_verbosity = 'high'
 
 nb_epoch = 10
 batch_size = 3

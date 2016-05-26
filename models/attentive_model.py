@@ -21,7 +21,7 @@ def get_model(
         data_path='datasets/toy_dataset/cnn_processed', #Path to dataset
         lstm_dim=32, #Dimension of the hidden LSTM layers
         optimizer='rmsprop', #Optimization function to be used
-        loss='sparse_categorical_crossentropy' #Loss function to be used
+        loss='categorical_crossentropy' #Loss function to be used
         ):
 
     metadata_dict = {}
