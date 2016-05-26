@@ -47,7 +47,7 @@ class DataGenerator(object):
         self.cur_file_indices = np.random.permutation(np.arange(nb_samples_in_file))
 
 
-    def get_nb_samples(nb_samples):
+    def get_nb_samples(self, nb_samples):
         indices = \
                 self.cur_file_indices[self.cur_file_sample_index:self.cur_file_sample_index + nb_samples]
         X = self.cur_file_content['X'][indices]
@@ -69,7 +69,7 @@ class DataGenerator(object):
             self.init_next_file()
             # We compute the number of samples needed after getting the samples from the first file
             needed_samples = self.batch_size - nb_samples_from_cur_file
-            X_next_file, Xq_next_file, y_cur_file = self.get_nb_samples(needed_samples)
+            X_next_file, Xq_next_file, y_next_file = self.get_nb_samples(needed_samples)
             if nb_samples_from_cur_file > 0:
                 X = np.vstack((X_cur_file, X_next_file))
                 Xq = np.vstack((Xq_cur_file, Xq_next_file))

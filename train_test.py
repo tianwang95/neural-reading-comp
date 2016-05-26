@@ -1,9 +1,13 @@
 import os
 from models import attentive_model
 from models.data_generator import DataGenerator
+import theano
+
+theano.config.optimizer = 'None'
+theano.config.exception_verbosiry = 'high'
 
 nb_epoch = 10
-batch_size = 32
+batch_size = 3
 
 dataset = 'datasets/toy_dataset/cnn_processed'
 model = attentive_model.get_model()
