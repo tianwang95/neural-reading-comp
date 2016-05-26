@@ -1,3 +1,0 @@
-input_length:1948
-query_length:20
-vocab_size:3000
