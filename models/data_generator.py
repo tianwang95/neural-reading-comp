@@ -1,7 +1,14 @@
+import os
+import numpy as np
+
 class DataGenerator(object):
 
-    def __init__(self, batch_size, directory, samples_per_file=4):
-        self.filelist = os.listdir(directory)
+    def __init__(self, batch_size, directory, data_type):
+        """
+        data_type: "training", "validation", or "test"
+        """
+        self.question_dir = os.path.join(directory,'questions',data_type)
+        self.filelist = os.listdir(self.question_dir)
         self.batch_size = batch_size
         self.cur_file = 0
         self.cur_file_sample_index = 0
@@ -9,6 +16,16 @@ class DataGenerator(object):
         self.cur_file_indices = []
         self.init_next_file()
 
+        metadata_dict = {}
+        f = open(os.path.join(directory, 'metadata', 'metadata.txt'), 'r')
+        for line in f:
+            entry = line.split(':')
+            metadata_dict[entry[0]] = int(entry[1])
+        f.close()
+        self.nb_samples_epoch = metadata_dict[data_type] 
+
+    def get_nb_samples_epoch(self):
+        return self.nb_samples_epoch
 
     def __iter__(self):
         return self
@@ -18,13 +35,13 @@ class DataGenerator(object):
         return self.next()
 
 
-    def init_next_file():
+    def init_next_file(self):
         if self.cur_file >= len(self.filelist):
             np.random.shuffle(self.filelist)
             self.cur_file = 0
         next_fn = self.filelist[self.cur_file]
         self.cur_file += 1
-        self.cur_file_content = np.load(next_fn)
+        self.cur_file_content = np.load(os.path.join(self.question_dir, next_fn))
         nb_samples_in_file = self.cur_file_content['X'].shape[0]
         self.cur_file_sample_index = 0
         self.cur_file_indices = np.random.permutation(np.arange(nb_samples_in_file))
@@ -68,6 +85,6 @@ class DataGenerator(object):
                     [self.cur_file_sample_index : \
                     self.cur_file_sample_index + self.batch_size]
             self.cur_file_sample_index += self.batch_size
-            return [self.cur_file_content['X'][next_batch_indices],
-                    self.cur_file_content['Xq'][next_batch_indices]],
+            return [self.cur_file_content['X'][next_batch_indices], \
+                    self.cur_file_content['Xq'][next_batch_indices]], \
                     self.cur_file_content['y'][next_batch_indices]

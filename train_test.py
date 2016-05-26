@@ -1,20 +1,27 @@
 import os
-import models
-import preprocessing.rc_data.DataProcessor.rc_data_generator as data_generator
+from models import attentive_model
+from models.data_generator import DataGenerator
 
-nb_epochs = 10
+nb_epoch = 10
 batch_size = 32
-dataset = 'datasets/toy_dataset/cnn_processed/questions'
-model = models.attentive_model.get_model()
+
+dataset = 'datasets/toy_dataset/cnn_processed'
+model = attentive_model.get_model()
 
 #TRAINING
-for _ in nb_epochs:
-    for X, y in data_generator(os.path.join(dataset,'training')):
-        trainHistory = model.fit(X, y, batch_size=batch_size, nb_epochs=1, verbose=2)
+print "Starting training"
+
+train_generator = DataGenerator(batch_size, dataset, 'training')
+validation_generator = DataGenerator(batch_size, dataset, 'validation')
+
+print "Calling fit generator"
+
+train_history = model.fit_generator(train_generator,
+                                   samples_per_epoch=train_generator.nb_samples_epoch,
+                                   nb_epoch=nb_epoch,
+                                   verbose=2,
+                                   validation_data=validation_generator,
+                                   nb_val_samples=validation_generator.nb_samples_epoch)
 
 print "Training done"
-print trainHistory.history
-
-
-
-
+print train_history.history

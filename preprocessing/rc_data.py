@@ -26,7 +26,7 @@ class DataProcessor:
         self.lock = Lock()
         self.max_entity_id = 0
         self.entity_set = set()
-
+        self.nb_samples_list = []
         self.word_to_idx = {}
         self.add_word('<UNK>') #add unknown word
 
@@ -124,9 +124,10 @@ class DataProcessor:
 
         returns input_length, query_length
         """
-        for directory in directories:
+        for d_idx, directory in enumerate(directories):
             for i in os.listdir(directory):
                 if i.endswith('.question'):
+                    self.nb_samples_list[d_idx] += 1
                     t = Thread(target=self.get_file_lengths, args=(directory, i))
                     t.start()
                     self.threads.append(t)
@@ -257,6 +258,7 @@ class DataProcessor:
         sources[0] must be training!
         targets[0] must be training!
         """
+        self.nb_samples_list = [0 for _ in xrange(len(targets))]
         a = time.time()
         self.get_lengths(sources)
         b = time.time()
@@ -275,6 +277,8 @@ class DataProcessor:
         f.write("query_length:{}\n".format(self.query_length))
         f.write("vocab_size:{}\n".format(len(self.word_to_idx)))
         f.write("entity_dim:{}\n".format(self.max_entity_id + 1))
+        for target, nb_samples in it.izip(targets, self.nb_samples_list):
+            f.write("{}:{}\n".format(target.split('/')[-1], nb_samples))
         f.close()
 
         if self.word_vector:
