@@ -17,8 +17,8 @@ from keras.layers import LSTM
 
 ### MODEL
 
-def get_attentive_model(
-        data_path='toy_dataset/cnn_processed', #Path to dataset
+def get_model(
+        data_path='../datasets/toy_dataset/cnn_processed', #Path to dataset
         lstm_dim=32, #Dimension of the hidden LSTM layers
         optimizer='rmsprop', #Optimization function to be used
         loss='sparse_categorical_crossentropy' #Loss function to be used
@@ -28,6 +28,7 @@ def get_attentive_model(
     input_maxlen = int(f.readline().split(':')[1])
     query_maxlen = int(f.readline().split(':')[1])
     vocab_size = int(f.readline().split(':')[1])
+    entity_dim = int(f.readline().split(':')[1])
     f.close()
 
     embed_weights = np.load(os.path.join(DATA_PATH, 'metadata', 'weights.npy'))
@@ -78,16 +79,15 @@ def get_attentive_model(
 #story_merged = (nb_samples, slen, 2hdim)
     r = merge([s, story_merged], mode='dot', dot_axes=(1,1))
 #r-shape = (nb_samples, 1, 2hdim)
-    g_r = TimeDistributed(Dense(2*lstm_dim))(r)
-    g_u = TimeDistributed(Dense(2*lstm_dim))(u)
+    g_r = Dense(word_dim)(r)
+    g_u = Dense(word_dim)(u)
     g_r_plus_g_u = merge([g_r, g_u], mode='sum')
-    g_d_q = Activation('tanh')
-#g_d_q-shape (nb_samples, 1, 2hdim)
+    g_d_q = Activation('tanh')(g_r_plus_g_u)
+#g_d_q-shape (nb_samples, 1, word_dim)
+    result = Dense(entity_num, activation='softmax')(g_d_q)
 
-    model = Model(input=[story_input, query_input], output=g_d_q)
+    model = Model(input=[story_input, query_input], output=result)
     model.compile(optimizer=optimizer,
                   loss=loss,
                   metrics=['accuracy'])
     return model
-
-

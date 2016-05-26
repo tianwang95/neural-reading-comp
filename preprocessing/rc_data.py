@@ -83,7 +83,9 @@ class DataProcessor:
 
         Xq = np.array(Xq)
 
-        y = int(answer[len('@entity'):])
+        y = np.zeros((self.max_entity_id + 1,))
+
+        y[int(answer[len('@entity'):])] = 1
 
         return X, Xq, y
 
@@ -284,13 +286,3 @@ class DataProcessor:
 
     def get_idx_to_word(self):
         return {v: k for k, v in self.word_to_idx.iteritems()}
-
-
-def rc_data_generator(directory):
-    """
-    return ([X, Xq], y)
-    """
-    filelist = os.listdir(directory)
-    for fn in filelist:
-        array = np.load(os.path.join(directory, fn))
-        yield [array[0], array[1]], array[2]
