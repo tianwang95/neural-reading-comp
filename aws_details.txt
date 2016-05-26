@@ -1,0 +1,5 @@
+public DNS: 
+ec2-54-183-1-219.us-west-1.compute.amazonaws.com
+
+ID:
+i-d664f663
