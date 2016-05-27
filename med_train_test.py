@@ -5,7 +5,7 @@ import theano
 theano.config.floatX = 'float32'
 theano.config.optimization = 'fast_run'
 
-nb_epoch = 3
+nb_epoch = 10
 batch_size = 32
 
 dataset = 'datasets/med_dataset/cnn_processed'

@@ -2,7 +2,6 @@ import os
 from models import attentive_model
 from models.data_generator import DataGenerator
 import theano
-#theano.config.device = 'gpu'
 theano.config.floatX = 'float32'
 theano.config.optimization = 'fast_run'
 
