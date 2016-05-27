@@ -28,9 +28,7 @@ class DataProcessor:
         self.nb_samples_list = []
         self.word_to_idx = {}
         self.add_word('<UNK>') #add unknown word
-        self.lock = Lock()
         self.executor = ThreadPoolExecutor(max_workers=1)
-        self.max_workers = 1
 
     def add_word(self, word):
         self.word_to_idx[word] = len(self.word_to_idx) + 1
@@ -153,8 +151,7 @@ class DataProcessor:
 
 
     @staticmethod
-    def get_file_vocab(train_directory, fn):
-        c = Counter()
+    def get_file_vocab(train_directory, fn, c, lock):
         f = open(os.path.join(train_directory, fn), 'r')
         lines = []
         for _ in xrange(7):
@@ -167,11 +164,14 @@ class DataProcessor:
 
         for word in context.split():
             if word[0] != '@':
+                lock.acquire()
                 c[word] += 1
+                lock.release()
         for word in query:
             if word[0] != '@':
+                lock.acquire()
                 c[word] += 1
-        return c
+                lock.release()
 
     def set_vocab(self, train_directory):
         """
@@ -180,9 +180,10 @@ class DataProcessor:
         """
         c = Counter()
         futures = []
+        cLock = Lock()
         for i in os.listdir(train_directory):
             if i.endswith('.question'):
-                futures.append(self.executor.submit(DataProcessor.get_file_vocab, train_directory, i))
+                futures.append(self.executor.submit(DataProcessor.get_file_vocab, train_directory, i, c, cLock))
 
         assert len(futures) > 0
 
@@ -190,12 +191,11 @@ class DataProcessor:
 
         for f in futures:
             assert f.done()
-            c_f = f.result()
-            c.update(c_f)
 
         # compute final vocab list
         for word in self.entity_set:
             self.add_word(word)
+
         num_to_add = self.vocab_size - len(self.word_to_idx)
 
         assert(num_to_add <= len(c))
