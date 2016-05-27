@@ -14,6 +14,7 @@ from keras.layers.embeddings import Embedding
 from keras.layers.core import Activation, Dense, Dropout, RepeatVector, Lambda 
 from keras.layers.wrappers import TimeDistributed
 from keras.layers import LSTM
+from custom import Reverse, masked_concat, masked_dot, masked_sum
 
 ### MODEL
 
@@ -46,6 +47,7 @@ def get_model(
     x = Embedding(input_dim=vocab_size+2,
                   output_dim=word_dim,
                   input_length=story_maxlen,
+                  mask_zero=True,
                   weights=[embed_weights])(story_input)
 #   (None, story_maxlen, word_dim)
 
@@ -58,13 +60,11 @@ def get_model(
                         consume_less='gpu',
                         go_backwards=True)(x)
 #   (None, story_maxlen, lstm_dim)
-    def reverse(x):
-        return x[:,::-1,:] 
 
-    story_lstm_b_r = Lambda(reverse, output_shape = lambda x: x)(story_lstm_b)
+    story_lstm_b_r = Reverse()(story_lstm_b)
 #   (None, story_maxlen, lstm_dim)
 
-    yd = merge([story_lstm_f, story_lstm_b_r], mode='concat', concat_axis=2)
+    yd = masked_concat([story_lstm_f, story_lstm_b_r])
 #   (None, story_maxlen, 2*lstm_dim)
 
     query_input = Input(shape=(query_maxlen,), dtype='int32', name='QueryInput')
@@ -73,6 +73,7 @@ def get_model(
     x_q = Embedding(input_dim=vocab_size+2,
             output_dim=word_dim,
             input_length=query_maxlen,
+            mask_zero=True,
             weights=[embed_weights])(query_input)
 #   (None, query_maxlen, word_dim)
 
@@ -83,7 +84,6 @@ def get_model(
                         go_backwards=True,
                         consume_less='gpu')(x_q)
 #   (None, lstm_dim)
-
 
     u = merge([query_lstm_f, query_lstm_b], mode='concat')
 #   (None, 2*lstm_dim)
@@ -101,7 +101,7 @@ def get_model(
 #   (None, story_maxlen, 2*lstm_dim)
 
 
-    story_query_sum = merge([story_dense, query_dense], mode='sum')
+    story_query_sum = masked_sum([story_dense, query_dense])
 #   (None, story_maxlen, 2*lstm_dim)
 
 
@@ -111,8 +111,9 @@ def get_model(
 #   (None, story_maxlen, 1)
 
 
-    r = merge([s, yd], mode='dot', dot_axes=(1,1))
+    r = masked_dot([s, yd])
 #   dotting (None, story_maxlen, 1) . (None, story_maxlen, 2*lstm_dim)
+#   along (1,1)
 #   (None, 1, 2*lstm_dim)
 
     def flatten(x):
@@ -138,4 +139,5 @@ def get_model(
     model.compile(optimizer=optimizer,
                   loss=loss,
                   metrics=['accuracy'])
+    print(model.summary())
     return model
