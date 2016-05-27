@@ -29,6 +29,7 @@ class DataProcessor:
         self.word_to_idx = {}
         self.add_word('<UNK>') #add unknown word
         self.lock = Lock()
+        self.max_workers = 1
 
     def add_word(self, word):
         self.word_to_idx[word] = len(self.word_to_idx) + 1
@@ -122,7 +123,7 @@ class DataProcessor:
 
         returns input_length, query_length
         """
-        with ThreadPoolExecutor(max_workers=20) as executor:
+        with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
             for d_idx, directory in enumerate(directories):
                 for i in os.listdir(directory):
                     if i.endswith('.question'):
@@ -157,7 +158,7 @@ class DataProcessor:
         """
         c = Counter()
 
-        with ThreadPoolExecutor(max_workers=20) as executor:
+        with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
             for i in os.listdir(train_directory):
                 if i.endswith('.question'):
                     executor.submit(self.get_file_vocab, train_directory, i, c)
@@ -214,7 +215,7 @@ class DataProcessor:
         for source, target in it.izip(sources, targets):
             all_files = os.listdir(source)
             batch_file_lists = [all_files[x:x+batch_size] for x in xrange(0, len(all_files), batch_size)]
-            with ThreadPoolExecutor(max_workers=20) as executor:
+            with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
                 for i, batch_file_list in enumerate(batch_file_lists):
                     executor.submit(self.make_batch, batch_file_list, source, target, i)
             '''
