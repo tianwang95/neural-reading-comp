@@ -8,7 +8,7 @@ theano.config.optimization = 'fast_run'
 nb_epoch = 60
 batch_size = 32
 
-dataset = 'datasets/toy_dataset/cnn_processed'
+dataset = 'datasets/sml_dataset/cnn_processed'
 model = simple_model.get_model(data_path=dataset, lstm_dim=128)
 
 #TRAINING
@@ -27,8 +27,3 @@ model.fit_generator(train_generator,
                                    nb_val_samples=validation_generator.nb_samples_epoch)
 
 print "Training done"
-
-print "Testing starting"
-
-test_generator = DataGenerator(batch_size, dataset, 'test')
-print model.evaluate_generator(test_generator, 10)

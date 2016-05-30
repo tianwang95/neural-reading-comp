@@ -8,11 +8,11 @@ class MaskedConcat(Layer):
     Preserves masking
     """
 
-    def __init__(self, layers=None, **kwargs):
-        self.concat_axis = -1
+    def __init__(self, concat_axis, layers=None, **kwargs):
+        self.concat_axis = concat_axis
         self.supports_masking = True
         super(MaskedConcat, self).__init__(**kwargs)
-        
+
         if layers:
             node_indices = [0 for _ in range(len(layers))]
             self.built = True
@@ -24,29 +24,37 @@ class MaskedConcat(Layer):
         assert isinstance(inputs, list)
         if mask:
             assert isinstance(mask, list) or isinstance(mask, tuple)
-            assert K.equal(mask[0], mask[1])
-        
+            if self.concat_axis == 2:
+                assert K.equal(mask[0], mask[1])
+
         return K.concatenate(inputs, axis=self.concat_axis)
 
     def compute_mask(self, inputs, input_mask=None):
         if input_mask:
             assert(isinstance(input_mask, list) or isinstance(input_mask, tuple))
-            assert(K.equal(input_mask[0], input_mask[1]))
-
-            return input_mask[0]
-
-        return None
+            if self.concat_axis == 2:
+                assert(K.equal(input_mask[0], input_mask[1]))
+                return input_mask[0]
+            elif self.concat_axis == 1:
+                return K.concatenate(input_mask, axis=1)
+            else:
+                return None
+        else:
+            return None
 
     def get_output_shape_for(self, input_shapes):
-        in_shape = input_shapes[0]
-        output_shape = (in_shape[0], in_shape[1], in_shape[2] * 2)
+        if self.concat_axis == 2:
+            in_shape = input_shapes[0]
+            output_shape = (in_shape[0], in_shape[1], in_shape[2] * 2)
+        elif self.concat_axis == 1:
+            output_shape = (input_shapes[0][0], input_shapes[0][1] + input_shapes[1][1], input_shapes[0][2])
         return output_shape
 
-def masked_concat(inputs):
+def masked_concat(inputs, concat_axis=2):
     """
     Functional API for MaskedConcat
     """
-    concat_layer = MaskedConcat()
+    concat_layer = MaskedConcat(concat_axis=concat_axis)
     return concat_layer(inputs)
 
 class Reverse(Layer):
