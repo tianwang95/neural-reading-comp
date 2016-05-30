@@ -1,0 +1,10 @@
+./med_train_test.py: 3: ./med_train_test.py: import: not found
+from: can't read /var/mail/models
+from: can't read /var/mail/models.data_generator
+./med_train_test.py: 6: ./med_train_test.py: import: not found
+./med_train_test.py: 7: ./med_train_test.py: theano.config.floatX: not found
+./med_train_test.py: 8: ./med_train_test.py: theano.config.optimization: not found
+./med_train_test.py: 10: ./med_train_test.py: nb_epoch: not found
+./med_train_test.py: 11: ./med_train_test.py: batch_size: not found
+./med_train_test.py: 13: ./med_train_test.py: dataset: not found
+./med_train_test.py: 14: ./med_train_test.py: Syntax error: "(" unexpected

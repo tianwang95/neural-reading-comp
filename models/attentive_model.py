@@ -19,8 +19,8 @@ from custom import Reverse, masked_concat, masked_dot, masked_sum
 ### MODEL
 
 def get_model(
-        data_path='datasets/toy_dataset/cnn_processed', #Path to dataset
-        lstm_dim=32, #Dimension of the hidden LSTM layers
+        data_path, #Path to dataset
+        lstm_dim, #Dimension of the hidden LSTM layers
         optimizer='rmsprop', #Optimization function to be used
         loss='categorical_crossentropy' #Loss function to be used
         ):

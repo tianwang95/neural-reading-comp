@@ -13,3 +13,26 @@ Traceback (most recent call last):
   File "/usr/lib/python2.7/threading.py", line 745, in start
     _start_new_thread(self.__bootstrap, ())
 thread.error: can't start new thread
+Traceback (most recent call last):
+  File "preprocess_cnn.py", line 7, in <module>
+    glove_dict = rc_data.glove2dict(os.path.join("../glove.6B", "glove.6B.200d.txt"))
+  File "/home/ubuntu/neural-reading-comp/preprocessing/rc_data.py", line 12, in glove2dict
+    reader = csv.reader(open(src_filename),
+IOError: [Errno 2] No such file or directory: '../glove.6B/glove.6B.200d.txt'
+Traceback (most recent call last):
+  File "./preprocess_cnn.py", line 7, in <module>
+    glove_dict = rc_data.glove2dict(os.path.join("../glove.6B", "glove.6B.100d.txt"))
+  File "/home/ubuntu/neural-reading-comp/preprocessing/rc_data.py", line 12, in glove2dict
+    reader = csv.reader(open(src_filename),
+IOError: [Errno 2] No such file or directory: '../glove.6B/glove.6B.100d.txt'
+Traceback (most recent call last):
+  File "./preprocess_cnn.py", line 18, in <module>
+    data_processor.do_all(sources, targets, metadata_directory, 10000)
+  File "/home/ubuntu/neural-reading-comp/preprocessing/rc_data.py", line 289, in do_all
+    self.get_lengths(sources)
+  File "/home/ubuntu/neural-reading-comp/preprocessing/rc_data.py", line 133, in get_lengths
+    for i in os.listdir(directory):
+OSError: [Errno 2] No such file or directory: '../datasets/full_data/cnn/questions/training'
+lengths done! - 311.912616968s
+vocab set! - 266.454473019s
+batches done! - 279.921319008s

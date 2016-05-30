@@ -1,3 +1,5 @@
+ #!/usr/bin/env python 
+
 import os
 from models import attentive_model
 from models.data_generator import DataGenerator
@@ -9,7 +11,7 @@ nb_epoch = 10
 batch_size = 32
 
 dataset = 'datasets/med_dataset/cnn_processed'
-model = attentive_model.get_model()
+model = attentive_model.get_model(data_path=dataset, lstm_dim=32)
 
 #TRAINING
 print "Starting training"
