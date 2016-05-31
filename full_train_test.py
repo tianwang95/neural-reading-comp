@@ -8,10 +8,10 @@ import theano
 theano.config.floatX = 'float32'
 theano.config.optimization = 'fast_run'
 
-nb_epoch = 20
+nb_epoch = 7
 batch_size = 32
 
-dataset = 'datasets/med_dataset/cnn_processed'
+dataset = 'datasets/full_dataset/cnn_processed'
 model = simple_model.get_model(data_path=dataset, lstm_dim=128)
 
 #TRAINING

@@ -1,10 +1,33 @@
-./med_train_test.py: 3: ./med_train_test.py: import: not found
-from: can't read /var/mail/models
-from: can't read /var/mail/models.data_generator
-./med_train_test.py: 6: ./med_train_test.py: import: not found
-./med_train_test.py: 7: ./med_train_test.py: theano.config.floatX: not found
-./med_train_test.py: 8: ./med_train_test.py: theano.config.optimization: not found
-./med_train_test.py: 10: ./med_train_test.py: nb_epoch: not found
-./med_train_test.py: 11: ./med_train_test.py: batch_size: not found
-./med_train_test.py: 13: ./med_train_test.py: dataset: not found
-./med_train_test.py: 14: ./med_train_test.py: Syntax error: "(" unexpected
+Using Theano backend.
+Using gpu device 0: GRID K520 (CNMeM is disabled, cuDNN not available)
+Using Theano backend.
+Using gpu device 0: GRID K520 (CNMeM is disabled, cuDNN not available)
+____________________________________________________________________________________________________
+Layer (type)                       Output Shape        Param #     Connected to                     
+====================================================================================================
+QueryInput (InputLayer)            (None, 47)          0                                            
+____________________________________________________________________________________________________
+StoryInput (InputLayer)            (None, 2000)        0                                            
+____________________________________________________________________________________________________
+embedding_1 (Embedding)            (None, 2000, 100)   1000200     StoryInput[0][0]                 
+____________________________________________________________________________________________________
+embedding_2 (Embedding)            (None, 47, 100)     1000200     QueryInput[0][0]                 
+____________________________________________________________________________________________________
+maskedconcat_1 (MaskedConcat)      (None, 2047, 100)   0           embedding_2[0][0]                
+                                                                   embedding_1[0][0]                
+____________________________________________________________________________________________________
+lstm_1 (LSTM)                      (None, 128)         117248      maskedconcat_1[0][0]             
+____________________________________________________________________________________________________
+lstm_2 (LSTM)                      (None, 128)         117248      maskedconcat_1[0][0]             
+____________________________________________________________________________________________________
+merge_1 (Merge)                    (None, 256)         0           lstm_1[0][0]                     
+                                                                   lstm_2[0][0]                     
+____________________________________________________________________________________________________
+dense_1 (Dense)                    (None, 596)         153172      merge_1[0][0]                    
+====================================================================================================
+Total params: 2388068
+____________________________________________________________________________________________________
+None
+Starting training
+Calling fit generator
+Epoch 1/7

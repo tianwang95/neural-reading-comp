@@ -1,0 +1,83 @@
+./med_train_test.py: 3: ./med_train_test.py: import: not found
+from: can't read /var/mail/models
+from: can't read /var/mail/models.data_generator
+./med_train_test.py: 6: ./med_train_test.py: import: not found
+./med_train_test.py: 7: ./med_train_test.py: theano.config.floatX: not found
+./med_train_test.py: 8: ./med_train_test.py: theano.config.optimization: not found
+./med_train_test.py: 10: ./med_train_test.py: nb_epoch: not found
+./med_train_test.py: 11: ./med_train_test.py: batch_size: not found
+./med_train_test.py: 13: ./med_train_test.py: dataset: not found
+./med_train_test.py: 14: ./med_train_test.py: Syntax error: "(" unexpected
+Using Theano backend.
+Using gpu device 0: GRID K520 (CNMeM is disabled, cuDNN not available)
+/usr/local/lib/python2.7/dist-packages/keras/engine/training.py:1402: UserWarning: Epoch comprised more than `samples_per_epoch` samples, which might affect learning results. Set `samples_per_epoch` correctly to avoid this warning.
+  warnings.warn('Epoch comprised more than '
+____________________________________________________________________________________________________
+Layer (type)                       Output Shape        Param #     Connected to                     
+====================================================================================================
+QueryInput (InputLayer)            (None, 37)          0                                            
+____________________________________________________________________________________________________
+StoryInput (InputLayer)            (None, 2000)        0                                            
+____________________________________________________________________________________________________
+embedding_1 (Embedding)            (None, 2000, 100)   7000200     StoryInput[0][0]                 
+____________________________________________________________________________________________________
+embedding_2 (Embedding)            (None, 37, 100)     7000200     QueryInput[0][0]                 
+____________________________________________________________________________________________________
+maskedconcat_1 (MaskedConcat)      (None, 2037, 100)   0           embedding_1[0][0]                
+                                                                   embedding_2[0][0]                
+____________________________________________________________________________________________________
+lstm_1 (LSTM)                      (None, 128)         117248      maskedconcat_1[0][0]             
+____________________________________________________________________________________________________
+lstm_2 (LSTM)                      (None, 128)         117248      maskedconcat_1[0][0]             
+____________________________________________________________________________________________________
+merge_1 (Merge)                    (None, 256)         0           lstm_1[0][0]                     
+                                                                   lstm_2[0][0]                     
+____________________________________________________________________________________________________
+dense_1 (Dense)                    (None, 484)         124388      merge_1[0][0]                    
+====================================================================================================
+Total params: 14359284
+____________________________________________________________________________________________________
+None
+Starting training
+Calling fit generator
+Epoch 1/20
+3258s - loss: 4.0848 - acc: 0.1007 - val_loss: 3.9045 - val_acc: 0.0913
+Epoch 2/20
+3227s - loss: 3.7874 - acc: 0.1829 - val_loss: 3.6139 - val_acc: 0.1851
+Epoch 3/20
+3229s - loss: 3.5203 - acc: 0.2496 - val_loss: 3.5585 - val_acc: 0.2043
+Epoch 4/20
+3229s - loss: 3.3164 - acc: 0.2948 - val_loss: 3.4083 - val_acc: 0.2596
+Epoch 5/20
+3226s - loss: 3.0873 - acc: 0.3385 - val_loss: 3.4473 - val_acc: 0.2620
+Epoch 6/20
+3225s - loss: 2.8703 - acc: 0.3845 - val_loss: 3.5185 - val_acc: 0.2764
+Epoch 7/20
+3226s - loss: 2.6485 - acc: 0.4270 - val_loss: 3.5279 - val_acc: 0.2428
+Epoch 8/20
+3226s - loss: 2.4022 - acc: 0.4774 - val_loss: 3.7804 - val_acc: 0.2284
+Epoch 9/20
+3226s - loss: 2.1840 - acc: 0.5270 - val_loss: 3.9094 - val_acc: 0.2332
+Epoch 10/20
+3247s - loss: 1.9598 - acc: 0.5791 - val_loss: 4.1769 - val_acc: 0.2163
+Epoch 11/20
+3256s - loss: 1.7727 - acc: 0.6232 - val_loss: 4.4784 - val_acc: 0.1755
+Epoch 12/20
+3254s - loss: 1.5856 - acc: 0.6668 - val_loss: 4.7510 - val_acc: 0.2091
+Epoch 13/20
+3255s - loss: 1.4341 - acc: 0.7049 - val_loss: 4.7843 - val_acc: 0.2115
+Epoch 14/20
+3252s - loss: 1.2736 - acc: 0.7433 - val_loss: 5.2529 - val_acc: 0.1707
+Epoch 15/20
+3253s - loss: 1.1748 - acc: 0.7699 - val_loss: 5.3460 - val_acc: 0.1635
+Epoch 16/20
+3253s - loss: 1.0897 - acc: 0.7930 - val_loss: 5.3861 - val_acc: 0.1707
+Epoch 17/20
+3254s - loss: 1.0108 - acc: 0.8171 - val_loss: 5.6269 - val_acc: 0.1659
+Epoch 18/20
+3253s - loss: 0.9571 - acc: 0.8341 - val_loss: 5.5479 - val_acc: 0.1635
+Epoch 19/20
+3255s - loss: 0.8916 - acc: 0.8520 - val_loss: 5.6548 - val_acc: 0.1490
+Epoch 20/20
+3255s - loss: 0.8250 - acc: 0.8670 - val_loss: 5.7995 - val_acc: 0.1298
+Training done

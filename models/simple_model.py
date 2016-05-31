@@ -57,11 +57,11 @@ def get_model(
             mask_zero=True,
             weights=[embed_weights])(query_input)
 
-    concat_embeddings = masked_concat([x, x_q], concat_axis=1)
+    concat_embeddings = masked_concat([x_q, x], concat_axis=1)
 
-    lstm = LSTM(lstm_dim, consume_less='cpu')(concat_embeddings)
+    lstm = LSTM(lstm_dim, consume_less='gpu')(concat_embeddings)
 
-    reverse_lstm = LSTM(lstm_dim, consume_less='cpu', go_backwards=True)(concat_embeddings)
+    reverse_lstm = LSTM(lstm_dim, consume_less='gpu', go_backwards=True)(concat_embeddings)
 
     merged = merge([lstm, reverse_lstm], mode='concat')
 
