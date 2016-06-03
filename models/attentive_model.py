@@ -116,15 +116,14 @@ def get_model(
 #   dotting (None, story_maxlen, 1) . (None, story_maxlen, 2*lstm_dim)
 #   along (1,1)
 #   (None, 1, 2*lstm_dim)
-"""
-    def flatten(x):
-        return K.reshape(x, (x.shape[0], x.shape[2]))
+#
+#    def flatten(x):
+#        return K.reshape(x, (x.shape[0], x.shape[2]))
 
-    def flatten_output_shape(input_shape):
-        return (input_shape[0], input_shape[2]) 
+#    def flatten_output_shape(input_shape):
+#        return (input_shape[0], input_shape[2]) 
 
-    r_flatten = Lambda(flatten, output_shape=flatten_output_shape)(r)
-"""
+#    r_flatten = Lambda(flatten, output_shape=flatten_output_shape)(r)
     r_flatten = Flatten()(r)
 #   (None, 2*lstm_dim)
     g_r = Dense(word_dim)(r_flatten)
