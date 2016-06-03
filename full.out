@@ -1,7 +1,5 @@
 Using Theano backend.
-Using gpu device 0: GRID K520 (CNMeM is disabled, cuDNN not available)
-Using Theano backend.
-Using gpu device 0: GRID K520 (CNMeM is disabled, cuDNN not available)
+Using gpu device 0: GRID K520 (CNMeM is enabled with initial size: 95.0% of memory, cuDNN not available)
 ____________________________________________________________________________________________________
 Layer (type)                       Output Shape        Param #     Connected to                     
 ====================================================================================================
@@ -9,9 +7,9 @@ QueryInput (InputLayer)            (None, 47)          0
 ____________________________________________________________________________________________________
 StoryInput (InputLayer)            (None, 2000)        0                                            
 ____________________________________________________________________________________________________
-embedding_1 (Embedding)            (None, 2000, 100)   1000200     StoryInput[0][0]                 
+embedding_1 (Embedding)            (None, 2000, 100)   8000200     StoryInput[0][0]                 
 ____________________________________________________________________________________________________
-embedding_2 (Embedding)            (None, 47, 100)     1000200     QueryInput[0][0]                 
+embedding_2 (Embedding)            (None, 47, 100)     8000200     QueryInput[0][0]                 
 ____________________________________________________________________________________________________
 maskedconcat_1 (MaskedConcat)      (None, 2047, 100)   0           embedding_2[0][0]                
                                                                    embedding_1[0][0]                
@@ -25,7 +23,7 @@ merge_1 (Merge)                    (None, 256)         0           lstm_1[0][0]
 ____________________________________________________________________________________________________
 dense_1 (Dense)                    (None, 596)         153172      merge_1[0][0]                    
 ====================================================================================================
-Total params: 2388068
+Total params: 16388068
 ____________________________________________________________________________________________________
 None
 Starting training
@@ -33,5 +31,13 @@ Calling fit generator
 Epoch 1/7
 /usr/local/lib/python2.7/dist-packages/keras/engine/training.py:1402: UserWarning: Epoch comprised more than `samples_per_epoch` samples, which might affect learning results. Set `samples_per_epoch` correctly to avoid this warning.
   warnings.warn('Epoch comprised more than '
-35416s - loss: 3.3998 - acc: 0.2734 - val_loss: 2.8546 - val_acc: 0.3775
+29320s - loss: 3.4301 - acc: 0.2736 - val_loss: 2.9209 - val_acc: 0.3636
 Epoch 2/7
+29325s - loss: 2.8213 - acc: 0.3871 - val_loss: 2.5820 - val_acc: 0.4184
+Epoch 3/7
+29330s - loss: 2.5856 - acc: 0.4390 - val_loss: 2.4896 - val_acc: 0.4472
+Epoch 4/7
+29326s - loss: 2.4986 - acc: 0.4778 - val_loss: 2.4979 - val_acc: 0.4621
+Epoch 5/7
+29327s - loss: 2.3714 - acc: 0.5111 - val_loss: 2.4243 - val_acc: 0.4860
+Epoch 6/7
