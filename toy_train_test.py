@@ -1,5 +1,5 @@
 import os
-from models import simple_model
+from models import attentive_model
 from models.data_generator import DataGenerator
 import theano
 theano.config.floatX = 'float32'
@@ -9,7 +9,7 @@ nb_epoch = 60
 batch_size = 32
 
 dataset = 'datasets/toy_dataset/cnn_processed'
-model = simple_model.get_model(data_path=dataset, lstm_dim=128)
+model = attentive_model.get_model(data_path=dataset, lstm_dim=128)
 
 #TRAINING
 print "Starting training"

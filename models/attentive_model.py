@@ -11,10 +11,10 @@ from keras.models import Sequential
 from keras.models import Model
 from keras.engine import Input, Merge, merge
 from keras.layers.embeddings import Embedding
-from keras.layers.core import Activation, Dense, Dropout, RepeatVector, Flatten
+from keras.layers.core import Activation, Dense, Dropout, RepeatVector
 from keras.layers.wrappers import TimeDistributed
 from keras.layers import LSTM
-from custom import Reverse, masked_concat, masked_dot, masked_sum
+from custom import Reverse, masked_concat, masked_dot, masked_sum, MaskedFlatten
 from keras import backend as K
 
 ### MODEL
@@ -108,25 +108,19 @@ def get_model(
 
     m = Activation('tanh')(story_query_sum)
 #   (None, story_maxlen, 2*lstm_dim)
-    s = TimeDistributed(Dense(1, activation='softmax'))(m)
+    w_m = TimeDistributed(Dense(1))(m)
 #   (None, story_maxlen, 1)
+    w_m_flat = MaskedFlatten()(w_m)
+#   (None, story_maxlen)
+    s = Activation('softmax')(w_m_flat)
+#   (None, story_maxlen)
 
 
     r = masked_dot([s, yd])
 #   dotting (None, story_maxlen, 1) . (None, story_maxlen, 2*lstm_dim)
 #   along (1,1)
-#   (None, 1, 2*lstm_dim)
-#
-#    def flatten(x):
-#        return K.reshape(x, (x.shape[0], x.shape[2]))
-
-#    def flatten_output_shape(input_shape):
-#        return (input_shape[0], input_shape[2]) 
-
-#    r_flatten = Lambda(flatten, output_shape=flatten_output_shape)(r)
-    r_flatten = Flatten()(r)
 #   (None, 2*lstm_dim)
-    g_r = Dense(word_dim)(r_flatten)
+    g_r = Dense(word_dim)(r)
 #   (None, word_dim)
     g_u = Dense(word_dim)(u)
 #   (None, word_dim)

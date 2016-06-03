@@ -1,5 +1,6 @@
 from keras import backend as K
 from keras.engine.topology import Layer
+from keras.engine import InputSpec
 import numpy as np
 
 class MaskedConcat(Layer):
@@ -110,7 +111,7 @@ class MaskedDot(Layer):
     def get_output_shape_for(self, input_shapes):
         input_one = input_shapes[0]
         input_two = input_shapes[1]
-        return (input_one[0], input_one[2], input_two[2])
+        return (input_one[0], input_two[2])
 
 def masked_dot(inputs):
     masked_dot_layer = MaskedDot()
@@ -149,3 +150,21 @@ class MaskedSum(Layer):
 def masked_sum(inputs):
     masked_sum_layer = MaskedSum()
     return masked_sum_layer(inputs)
+
+class MaskedFlatten(Layer):
+    def __init__(self, **kwargs):
+        self.input_spec = [InputSpec(ndim='3+')]
+        self.supports_masking = True
+        super(MaskedFlatten, self).__init__(**kwargs)
+
+    def call(self, x, mask=None):
+        return K.batch_flatten(x)
+
+    def compute_mask(self, input, input_mask=None):
+        if input_mask:
+            return input_mask
+        else:
+            return None
+
+    def get_output_shape_for(self, input_shape):
+        return (input_shape[0], np.prod(input_shape[1:]))
