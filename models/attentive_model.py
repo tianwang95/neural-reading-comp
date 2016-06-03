@@ -11,7 +11,7 @@ from keras.models import Sequential
 from keras.models import Model
 from keras.engine import Input, Merge, merge
 from keras.layers.embeddings import Embedding
-from keras.layers.core import Activation, Dense, Dropout, RepeatVector, Lambda
+from keras.layers.core import Activation, Dense, Dropout, RepeatVector, Flatten
 from keras.layers.wrappers import TimeDistributed
 from keras.layers import LSTM
 from custom import Reverse, masked_concat, masked_dot, masked_sum
