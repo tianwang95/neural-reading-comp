@@ -41,3 +41,5 @@ Epoch 4/7
 Epoch 5/7
 29327s - loss: 2.3714 - acc: 0.5111 - val_loss: 2.4243 - val_acc: 0.4860
 Epoch 6/7
+29386s - loss: 2.2682 - acc: 0.5379 - val_loss: 2.5323 - val_acc: 0.4632
+Epoch 7/7
