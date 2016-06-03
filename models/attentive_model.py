@@ -15,6 +15,7 @@ from keras.layers.core import Activation, Dense, Dropout, RepeatVector, Lambda
 from keras.layers.wrappers import TimeDistributed
 from keras.layers import LSTM
 from custom import Reverse, masked_concat, masked_dot, masked_sum
+from keras import backend as K
 
 ### MODEL
 
@@ -115,14 +116,16 @@ def get_model(
 #   dotting (None, story_maxlen, 1) . (None, story_maxlen, 2*lstm_dim)
 #   along (1,1)
 #   (None, 1, 2*lstm_dim)
-
+"""
     def flatten(x):
-        return x.reshape((x.shape[0], x.shape[2]))
+        return K.reshape(x, (x.shape[0], x.shape[2]))
 
     def flatten_output_shape(input_shape):
         return (input_shape[0], input_shape[2]) 
 
     r_flatten = Lambda(flatten, output_shape=flatten_output_shape)(r)
+"""
+    r_flatten = Flatten()(r)
 #   (None, 2*lstm_dim)
     g_r = Dense(word_dim)(r_flatten)
 #   (None, word_dim)
