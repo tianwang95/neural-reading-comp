@@ -63,3 +63,16 @@ ________________________________________________________________________________
 None
 Starting training
 Calling fit generator
+Epoch 1/8
+/usr/local/lib/python2.7/dist-packages/keras/engine/training.py:1402: UserWarning: Epoch comprised more than `samples_per_epoch` samples, which might affect learning results. Set `samples_per_epoch` correctly to avoid this warning.
+  warnings.warn('Epoch comprised more than '
+30535s - loss: 2.8545 - acc: 0.4205 - val_loss: 2.0802 - val_acc: 0.5816
+Epoch 2/8
+30501s - loss: 2.1823 - acc: 0.5833 - val_loss: 1.8759 - val_acc: 0.6207
+Epoch 3/8
+30536s - loss: 1.9475 - acc: 0.6333 - val_loss: 1.7441 - val_acc: 0.6395
+Epoch 4/8
+30530s - loss: 1.7464 - acc: 0.6679 - val_loss: 1.7361 - val_acc: 0.6532
+Epoch 5/8
+30512s - loss: 1.5777 - acc: 0.6999 - val_loss: 1.7668 - val_acc: 0.6514
+Epoch 6/8

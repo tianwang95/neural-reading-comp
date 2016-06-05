@@ -22,7 +22,8 @@ def get_model(
         data_path, #Path to dataset
         lstm_dim, #Dimension of the hidden LSTM layers
         optimizer='rmsprop', #Optimization function to be used
-        loss='categorical_crossentropy' #Loss function to be used
+        loss='categorical_crossentropy', #Loss function to be used
+        weights_path=None #If specified initializes model with weight file given
         ):
 
     metadata_dict = {}
@@ -68,8 +69,13 @@ def get_model(
     result = Dense(entity_dim, activation='softmax')(merged)
 
     model = Model(input=[story_input, query_input], output=result)
+
+    if weights_path:
+        model.load_weights(weights_path)
+
     model.compile(optimizer=optimizer,
                   loss=loss,
                   metrics=['accuracy'])
+
     print(model.summary())
     return model

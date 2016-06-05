@@ -12,7 +12,6 @@ batch_size = 32
 
 dataset = 'datasets/full_dataset/cnn_processed'
 model = attentive_model.get_model(data_path=dataset, lstm_dim=128)
-
 #TRAINING
 print "Starting training"
 
