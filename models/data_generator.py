@@ -1,11 +1,13 @@
 import os
+import pickle
 import numpy as np
 
 class DataGenerator(object):
 
-    def __init__(self, batch_size, directory, data_type):
+    def __init__(self, batch_size, directory, data_type, complete=False):
         """
         data_type: "training", "validation", or "test"
+        complete: If True returns human readable story-query information
         """
         self.question_dir = os.path.join(directory,'questions',data_type)
         self.filelist = os.listdir(self.question_dir)
@@ -15,6 +17,8 @@ class DataGenerator(object):
         self.cur_file_content = None
         self.cur_file_indices = []
         self.nb_samples_in_file = 0
+        self.complete = complete
+        self.idx_to_word = None
         self.init_next_file()
 
         metadata_dict = {}
@@ -23,6 +27,12 @@ class DataGenerator(object):
             entry = line.split(':')
             metadata_dict[entry[0]] = int(entry[1])
         f.close()
+
+        if complete:
+            f = open(os.path.join(directory, 'metadata', 'idx_to_word.pickle'), 'rb')
+            self.idx_to_word = pickle.load(f)
+            f.close()
+
         self.nb_samples_epoch = metadata_dict[data_type] 
 
 
@@ -36,6 +46,23 @@ class DataGenerator(object):
 
     def __next__(self):
         return self.next()
+
+
+    def wordify(self, l):
+        length = len(l.flat);
+        result = np.empty((length,), dtype='object')
+        for i in xrange(length):
+            if l.flat[i] == 0:
+               break 
+            result[i] = self.idx_to_word[l.flat[i]]
+        np.reshape(result, l.shape)
+        return result
+
+    def get_complete_data(self, X, Xq, y):
+        X_words = self.wordify(X)
+        Xq_words = self.wordify(Xq)
+        y_words = self.wordify(y)
+        return ((X_words, Xq_words), y_words)
 
 
     def init_next_file(self):
@@ -82,4 +109,8 @@ class DataGenerator(object):
         Xq = np.vstack(Xqs)
         y = np.vstack(ys)
 
-        return [X, Xq], y
+        if self.complete:
+            complete_data = self.get_complete_data(X, Xq, y)
+            return (([X, Xq], y), complete_data)
+        else:
+            return [X, Xq], y

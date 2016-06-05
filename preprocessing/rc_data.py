@@ -315,6 +315,7 @@ class DataProcessor:
             np.save(os.path.join(metadata_directory, 'weights'), self.weights)
         f = open(os.path.join(metadata_directory, 'idx_to_word.pickle'), 'wb')
         pickle.dump(self.get_idx_to_word(), f)
+        f.close()
         
 
 
