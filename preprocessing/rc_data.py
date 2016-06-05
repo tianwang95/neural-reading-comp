@@ -29,6 +29,7 @@ class DataProcessor:
         self.nb_samples_list = []
         self.word_to_idx = {}
         self.add_word('<UNK>') #add unknown word
+        self.add_word('@placeholder')
         self.executor = ThreadPoolExecutor(max_workers=1)
 
     def add_word(self, word):

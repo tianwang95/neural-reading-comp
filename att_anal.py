@@ -12,6 +12,11 @@ validation_generator = DataGenerator(1, dataset, 'validation', complete=True)
 errors = []
 
 for model_input, complete_data in validation_generator:
+    question = [word for word in complete_data[0][1] if word is not None]
+    print ' '.join(question)
+
+'''
+for model_input, complete_data in validation_generator:
     doc_queries, answers = model_input
     if len(errors) >= eval_num_errors:
         break
@@ -41,4 +46,4 @@ for error in errors:
         f.write("Answer:")
         f.write(answer)
         f.write("--------------------------")
-
+'''
