@@ -7,6 +7,7 @@ import itertools as it
 from threading import Lock
 from concurrent.futures import ThreadPoolExecutor, wait 
 import time
+import pickle
 
 def glove2dict(src_filename):
     reader = csv.reader(open(src_filename),
@@ -312,6 +313,9 @@ class DataProcessor:
 
         if self.word_vector:
             np.save(os.path.join(metadata_directory, 'weights'), self.weights)
+        f = open(os.path.join(metadata_directory, 'idx_to_word.pickle'), 'wb')
+        pickle.dump(self.get_idx_to_word(), f)
+        
 
 
     def get_idx_to_word(self):
