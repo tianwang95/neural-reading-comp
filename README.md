@@ -44,8 +44,11 @@ The DataGenerator(found in `models/data_generator.py`) implements a Python itera
 
 The repo comes with two main deep learning models. 
 The *simple model* is a bidirectional LSTM that runs over a concatenation of the question and the document, and feeds into a softmax activation layer. It is the baseline model that achieves around 45% validation accuracy on the full CNN dataset.
+
 The *attentive model* is the implementation of the *attentive reader* introduced in [Hermann et al. 2015](http://arxiv.org/abs/1506.03340). It runs separate bidirectional LSTM's over the question and the document, and computes attention over each individual token of the document before merging the layers to final Dense and softmax activation layers. It achieves around 65% validation accuracy on the full CNN dataset. This is slightly higher than the accuracy reported in the original paper, likely due to the fact that we initialize our model with pretrained [GLoVe vectors](http://nlp.stanford.edu/pubs/glove.pdf).
+
 The model implementations can be found in `models/simple_model.py` and `models/attentive_model.py`. Both models support the same API where a call to `get_model` returns a Keras model instance that can be used to call train and evaluate functions. The model files just implement the model architecture, the actual calls to training and testing are done within the running scripts in the `scripts` directory.
+
 We had to implement several custom Keras layers to support the architecture required for these neural networks. These custom layers may be found in the `custom/` directory. The most important ones are several Merge layers that support Masking. Standard Keras merge layers don't support masking, whereas our document and question inputs need to have masking since not all the stories and questions are the same length. The custom Merge layers we implemented let us work with these masked layers, but they are not robust enough to be used as full merge layers that support masking. 
 
 ## Error Analysis
