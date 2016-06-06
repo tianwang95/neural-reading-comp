@@ -36,8 +36,6 @@ class ErrorAnalyzer(object):
             for i in xrange(len(predictions)):
                 prediction = np.argmax(predictions[i])
                 answer = np.argmax(answers[i])
-                print prediction
-                print answer
                 if (prediction == answer) == return_correct:
                     data = [e.tolist() for e in complete_data[i]]
                     return {

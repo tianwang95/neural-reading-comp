@@ -27,7 +27,7 @@ model.fit_generator(train_generator,
        samples_per_epoch=train_generator.nb_samples_epoch,
        nb_epoch=nb_epoch,
        verbose=2,
-       callbacks=[ModelCheckpoint('results/att_model/toy.{epoch:02d}-{val_loss:.2f}.hdf5')],
+       callbacks=[ModelCheckpoint(os.path.join(module_home, 'results/att_model/toy.{epoch:02d}-{val_loss:.2f}.hdf5'))],
        validation_data=validation_generator,
        nb_val_samples=validation_generator.nb_samples_epoch)
 

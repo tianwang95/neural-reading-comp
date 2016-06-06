@@ -13,8 +13,8 @@ from models import attentive_model
 
 def get_opts(argv):
     model = attentive_model
-    dataset = os.path.join(module_home, 'datasets/toy_dataset/cnn_processed')
-    weights_path = os.path.join(module_home, 'results/att_model/att_model.00-2.08.hdf5')
+    dataset = os.path.join(module_home, 'datasets/full_dataset/cnn_processed')
+    weights_path = os.path.join(module_home, 'results/att_model/att_model.01-1.91.hdf5')
     hidden_dim = 128
     generator_set = 'validation' 
 
