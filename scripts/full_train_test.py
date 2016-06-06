@@ -1,14 +1,20 @@
+ #!/usr/bin/env python 
+
+import sys
 import os
+module_home = os.environ['NEURAL_PATH']
+sys.path.insert(0, module_home)
 from models import simple_model
+from models import attentive_model
 from models.data_generator import DataGenerator
 import theano
 theano.config.floatX = 'float32'
 theano.config.optimization = 'fast_run'
 
-nb_epoch = 60
+nb_epoch = 7
 batch_size = 32
 
-dataset = 'datasets/sml_dataset/cnn_processed'
+dataset = os.path.join(module_home, 'datasets/full_dataset/cnn_processed')
 model = simple_model.get_model(data_path=dataset, lstm_dim=128)
 
 #TRAINING

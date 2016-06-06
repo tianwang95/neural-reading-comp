@@ -1,4 +1,7 @@
+import sys
 import os
+module_home = os.environ['NEURAL_PATH']
+sys.path.insert(0, module_home)
 from models import simple_gru_model
 from models.data_generator import DataGenerator
 import theano
@@ -8,7 +11,7 @@ theano.config.optimization = 'fast_run'
 nb_epoch = 60
 batch_size = 32
 
-dataset = 'datasets/toy_dataset/cnn_processed'
+dataset = os.path.join(module_home, 'datasets/sml_dataset/cnn_processed')
 model = simple_gru_model.get_model(data_path=dataset, hid_dim=128)
 
 #TRAINING
@@ -27,8 +30,3 @@ model.fit_generator(train_generator,
                                    nb_val_samples=validation_generator.nb_samples_epoch)
 
 print "Training done"
-
-print "Testing starting"
-
-test_generator = DataGenerator(batch_size, dataset, 'test')
-print model.evaluate_generator(test_generator, 10)

@@ -1,14 +1,18 @@
-import rc_data
+import sys
 import os
 import numpy as np
+module_home = os.environ['NEURAL_PATH']
+sys.path.insert(0, module_home)
+import rc_data
 
-sources = ["../datasets/toy_dataset/cnn/questions/training",
-           "../datasets/toy_dataset/cnn/questions/test",
-           "../datasets/toy_dataset/cnn/questions/validation"]
-targets = ["../datasets/toy_dataset/cnn_processed/questions/training",
-           "../datasets/toy_dataset/cnn_processed/questions/test",
-           "../datasets/toy_dataset/cnn_processed/questions/validation"]
-metadata_directory = "../datasets/toy_dataset/cnn_processed/metadata"
+
+sources = ["datasets/toy_dataset/cnn/questions/training",
+           "datasets/toy_dataset/cnn/questions/test",
+           "datasets/toy_dataset/cnn/questions/validation"]
+targets = ["datasets/toy_dataset/cnn_processed/questions/training",
+           "datasets/toy_dataset/cnn_processed/questions/test",
+           "datasets/toy_dataset/cnn_processed/questions/validation"]
+metadata_directory = "datasets/toy_dataset/cnn_processed/metadata"
 
 directory = targets[0]
 

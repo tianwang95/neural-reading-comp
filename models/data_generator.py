@@ -1,6 +1,10 @@
 import os
+import sys
 import pickle
 import numpy as np
+module_home = os.environ['NEURAL_PATH']
+sys.path.insert(0, module_home)
+
 
 class DataGenerator(object):
 

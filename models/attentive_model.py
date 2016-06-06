@@ -6,6 +6,7 @@ At a high level, this model reads both the story and the question forwards and b
 """
 
 import os
+import sys
 import numpy as np
 from keras.models import Sequential
 from keras.models import Model
@@ -14,8 +15,10 @@ from keras.layers.embeddings import Embedding
 from keras.layers.core import Activation, Dense, Dropout, RepeatVector
 from keras.layers.wrappers import TimeDistributed
 from keras.layers import LSTM
-from custom import Reverse, masked_concat, masked_dot, masked_sum, MaskedFlatten
 from keras import backend as K
+module_home = os.environ['NEURAL_PATH']
+sys.path.insert(0, module_home)
+from custom import Reverse, masked_concat, masked_dot, masked_sum, MaskedFlatten
 
 ### MODEL
 
@@ -26,6 +29,7 @@ def get_model(
         loss='categorical_crossentropy', #Loss function to be used
         weights_path=None #If specified load weights from the given file
         ):
+
 
     metadata_dict = {}
     f = open(os.path.join(data_path, 'metadata', 'metadata.txt'), 'r')

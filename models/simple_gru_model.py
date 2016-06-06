@@ -6,6 +6,7 @@ At a high level, this model reads both the story and the question forwards and b
 """
 
 import os
+import sys
 import numpy as np
 from keras.models import Sequential
 from keras.models import Model
@@ -14,6 +15,8 @@ from keras.layers.embeddings import Embedding
 from keras.layers.core import Activation, Dense, Dropout, RepeatVector, Lambda
 from keras.layers.wrappers import TimeDistributed
 from keras.layers import GRU
+module_home = os.environ['NEURAL_PATH']
+sys.path.insert(0, module_home)
 from custom import Reverse, masked_concat, masked_dot, masked_sum
 
 ### MODEL

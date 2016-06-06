@@ -1,4 +1,7 @@
+import sys
 import os
+module_home = os.environ['NEURAL_PATH']
+sys.path.insert(0, module_home)
 from models import attentive_model
 from models.data_generator import DataGenerator
 from keras.callbacks import ModelCheckpoint, EarlyStopping
@@ -10,7 +13,7 @@ theano.config.optimization = 'fast_run'
 nb_epoch = 8
 batch_size = 32
 
-dataset = 'datasets/full_dataset/cnn_processed'
+dataset = os.path.join(module_home, 'datasets/full_dataset/cnn_processed')
 model = attentive_model.get_model(data_path=dataset, lstm_dim=128)
 #TRAINING
 print "Starting training"

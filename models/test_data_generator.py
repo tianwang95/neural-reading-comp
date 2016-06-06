@@ -1,16 +1,19 @@
 import os
+import sys
 import pickle
 import numpy as np
+module_home = os.environ['NEURAL_PATH']
+sys.path.insert(0, module_home)
 from data_generator import DataGenerator
 
-path = "../datasets/toy_dataset/cnn_processed/"
+path = os.path.join(module_home, "datasets/toy_dataset/cnn_processed/")
 batch_size = 32
 trainData = DataGenerator(batch_size, path, 'training')
 
 counter = 0
 X, y = trainData.next()
 
-for i in xrange(0):
+for i in xrange(10):
     print "--------------"
     X, y = trainData.next()
     if (X[0][0].shape != (1948,)):
