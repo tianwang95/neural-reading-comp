@@ -27,7 +27,8 @@ def get_model(
         lstm_dim, #Dimension of the hidden LSTM layers
         optimizer='rmsprop', #Optimization function to be used
         loss='categorical_crossentropy', #Loss function to be used
-        weights_path=None #If specified load weights from the given file
+        weights_path=None, #If specified load weights from the given file
+        output_attention=False #If true, only output the output of the attention layer
         ):
 
 
@@ -136,7 +137,10 @@ def get_model(
     result = Dense(entity_dim, activation='softmax')(g_d_q)
 #   (None, entity_dim)
 
-    model = Model(input=[story_input, query_input], output=result)
+    if output_attention:
+        model = Model(input=[story_input, query_input], output=[s, result])
+    else:
+        model = Model(input=[story_input, query_input], output=result)
     if weights_path:
         model.load_weights(weights_path)
     model.compile(optimizer=optimizer,
