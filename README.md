@@ -53,10 +53,8 @@ We had to implement several custom Keras layers to support the architecture requ
 
 ## Error Analysis
 
-The neural network running scripts can be configured to save the trained weights after each epoch. These trained weights should be saved to the `results/` directory. Given a trained network with saved weights, the error analysis script can print out samples of document-question pairs where the model answers correctly and wrong. The error analysis script can be found in `error_analysis/error_analysis.py` Run `./error_analysis.py -h` for more details on the usage of the error analysis script.  
+The neural network running scripts can be configured to save the trained weights after each epoch. These trained weights should be saved to the `results/` directory. Given a trained network with saved weights, the error analysis script can print out samples of document-question pairs where the model answers correctly and wrong. The error analysis script can be found in `error_analysis/error_analysis.py` Run `./error_analysis.py -h` for more details on the usage of the error analysis script. The error analysis script outputs the attention weights for each word in the document if the weight is above a given threshold.
 
 ## Future work
 
 A potential improvement for the attentive model where the weights for word embeddings of the question and the document get trained together as opposed to separately as they are now.
-
-Support for visualization of intermediate layer outputs. This will be especially useful for visualizing the attention of the attentive model.
